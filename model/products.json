@@ -1,0 +1,12 @@
+[
+    { 
+    	"name" : "pomarańcza", 
+    	"weight" : 0.3, 
+    	"description" : "Świeże, smaczne, prosto z Hiszpanii" 
+    },
+    { 
+    	"name" : "jabłko", 
+    	"weight" : 0.2, 
+    	"description" : "Ligol prosto od polskich producentów" 
+    }
+]
