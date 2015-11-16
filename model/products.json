@@ -2,11 +2,13 @@
     { 
     	"name" : "pomarańcza", 
     	"weight" : 0.3, 
-    	"description" : "Świeże, smaczne, prosto z Hiszpanii" 
+    	"description" : "Świeże, smaczne, prosto z Hiszpanii",
+        "price" : 10 
     },
     { 
     	"name" : "jabłko", 
     	"weight" : 0.2, 
-    	"description" : "Ligol prosto od polskich producentów" 
+    	"description" : "Ligol prosto od polskich producentów",
+        "price" : 2
     }
 ]
