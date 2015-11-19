@@ -1,5 +1,7 @@
 'use strict'
 
+//==========================================Nav=================================================== 
+
 var ctrls = angular.module( 'ctrls', [ 'ngRoute' ] );
 
 ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', function( $scope, $location ) {
@@ -7,6 +9,8 @@ ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', function( $scope, $
         return $location.path() === path;
     };
 }]);
+
+//==========================================Products============================================== 
 
 ctrls.controller( 'ProductsCtrl' , [ '$scope', '$http', function( $scope, $http ) {
     $http.get( 'model/products.json' ).
@@ -44,6 +48,8 @@ ctrls.controller( 'AddProductCtrl', [ '$scope', '$http', function( $scope, $http
     };
 }]);
 
+//==========================================Users=================================================
+
 ctrls.controller( 'UsersCtrl', [ '$scope', '$http', function( $scope, $http ) {
     $http.get( 'model/users.json' ).
     success( function( data ) {
@@ -51,4 +57,55 @@ ctrls.controller( 'UsersCtrl', [ '$scope', '$http', function( $scope, $http ) {
     }).error( function() {
         console.log('Błąd pobierania pliku users.json');
     });
+    $scope.deleteUser = function ( user, index ) {
+
+        $scope.users.splice( index, 1 );
+    };
+}]);
+
+ctrls.controller( 'EditUserCtrl', [ '$scope', '$http', '$routeParams', function( $scope, $http, $routeParams ) {
+    $http.get( 'model/users.json' ).
+    success( function( data ) {
+        $scope.user = data[$routeParams.id];
+    }).error( function() {
+        console.log('Błąd pobierania pliku users.json');
+    });
+
+    $scope.saveChanges = function ( user ) {
+
+        console.log( user );
+        console.log( 'Formularz przesłany' );
+    };
+}]);
+
+ctrls.controller( 'AddUserCtrl', [ '$scope', '$http', function( $scope, $http ) {
+    $scope.addUser = function () {
+
+        console.log( $scope.user );
+    };
+}]);
+
+//==========================================Orders================================================
+
+ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
+    $http.get( 'model/orders.json' ).
+    success( function( data ) {
+        $scope.orders = data;
+    }).error( function() {
+        console.log('Błąd pobierania pliku orders.json');
+    });
+
+    $scope.changeStatus = function ( order ) {
+
+        if ( order.status == 0 ) {
+            order.status = 1;
+        } else {
+            order.status = 0;
+        }
+    };
+
+    $scope.deleteOrder = function ( order, index ) {
+
+        $scope.orders.splice( order, 1 );
+    };
 }]);
