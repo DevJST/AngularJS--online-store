@@ -11,13 +11,17 @@
 
   <br/>
 
-  <div ng-controller="products">
-    <div class="alert alert-info" ng-repeat="product in products | filter : search">
-      <span class="text-capitalize">{{ product.name }}</span><br/>
-      waga: {{ product.weight }} kg<br/>
-      {{ product.description }}<br/>
-      {{ product.cena | number:2 }}zł / kg<br/>
-      <a href="#/product/edit/{{$index}}" class="btn btn-default">Edytuj</a>
-     </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="alert alert-info" ng-repeat="product in products | filter : search">
+        <span class="text-capitalize">{{ product.name }}</span><br/>
+        waga: {{ product.weight }} kg<br/>
+        {{ product.description }}<br/>
+        {{ product.price | number:2 }}zł / kg<br/>
+        <br/>
+        <a href="#/product/edit/{{$index}}" class="btn btn-default">Edytuj</a>
+        <button class="btn btn-danger pull-right" ng-click="deleteProduct( product, $index )">Usuń</button>
+      </div>
+    </div>
   </div>
 </div>  

@@ -1,14 +1,50 @@
 [
-    { 
-    	"name" : "pomarańcza", 
-    	"weight" : 0.3, 
-    	"description" : "Świeże, smaczne, prosto z Hiszpanii",
-        "price" : 10 
+    {
+        "name": "Diovan",
+        "weight": 0.23,
+        "description": "cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus",
+        "price": 8.88
     },
-    { 
-    	"name" : "jabłko", 
-    	"weight" : 0.2, 
-    	"description" : "Ligol prosto od polskich producentów",
-        "price" : 2
+    {
+        "name": "Furosemide",
+        "weight": 0.73,
+        "description": "inceptos hymenaeos. Mauris ut quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec",
+        "price": 2.49
+    },
+    {
+        "name": "Gianvi",
+        "weight": 1.68,
+        "description": "augue eu tellus. Phasellus elit pede, malesuada vel, venenatis vel, faucibus id, libero. Donec consectetuer mauris id sapien. Cras dolor dolor, tempus non, lacinia at, iaculis",
+        "price": 7.56
+    },
+    {
+        "name": "Klor-Con M20",
+        "weight": 0.52,
+        "description": "tincidunt aliquam arcu. Aliquam ultrices iaculis odio. Nam interdum enim non nisi. Aenean eget",
+        "price": 9.38
+    },
+    {
+        "name": "Carvedilol",
+        "weight": 1.38,
+        "description": "dolor vitae dolor. Donec fringilla. Donec feugiat metus sit amet ante. Vivamus non lorem vitae",
+        "price": 2.86
+    },
+    {
+        "name": "Oxycodone HCl",
+        "weight": 0.91,
+        "description": "Duis ac arcu. Nunc mauris. Morbi non sapien molestie orci tincidunt adipiscing. Mauris molestie pharetra nibh. Aliquam ornare, libero at auctor ullamcorper, nisl",
+        "price": 2.24
+    },
+    {
+        "name": "Benicar",
+        "weight": 0.79,
+        "description": "Vivamus non lorem vitae odio sagittis semper. Nam tempor diam dictum sapien. Aenean massa. Integer vitae nibh. Donec est mauris, rhoncus id, mollis nec, cursus",
+        "price": 8.71
+    },
+    {
+        "name": "Sulfamethoxazole/Trimethoprim",
+        "weight": 1.82,
+        "description": "gravida sagittis. Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit enim consequat purus. Maecenas libero est, congue a, aliquet vel, vulputate eu, odio. Phasellus at augue id",
+        "price": 8.65
     }
 ]
