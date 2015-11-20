@@ -5,12 +5,20 @@
 var ctrls = angular.module( 'ctrls', [ 'ngRoute' ] );
 
 ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', function( $scope, $location ) {
+    $scope.getNavigation = function () {
+        if ( $location.path().substring(0, 6) == "/admin" ) {
+            return 'partials/admin/navigation.html';
+        } else {
+            return 'partials/site/navigation.html'; 
+        }
+    }
+
     $scope.isActive = function ( path ) {
         return $location.path() === path;
     };
 }]);
 
-//==========================================Products============================================== 
+//==========================================Admin Products============================================== 
 
 ctrls.controller( 'ProductsCtrl' , [ '$scope', '$http', function( $scope, $http ) {
     $http.get( 'model/products.json' ).
@@ -48,7 +56,7 @@ ctrls.controller( 'AddProductCtrl', [ '$scope', '$http', function( $scope, $http
     };
 }]);
 
-//==========================================Users=================================================
+//==========================================Admin Users=================================================
 
 ctrls.controller( 'UsersCtrl', [ '$scope', '$http', function( $scope, $http ) {
     $http.get( 'model/users.json' ).
@@ -85,7 +93,7 @@ ctrls.controller( 'AddUserCtrl', [ '$scope', '$http', function( $scope, $http ) 
     };
 }]);
 
-//==========================================Orders================================================
+//==========================================Admin Orders================================================
 
 ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
     $http.get( 'model/orders.json' ).
@@ -109,3 +117,26 @@ ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
         $scope.orders.splice( order, 1 );
     };
 }]);
+
+
+
+//===========================================Site Orders================================================
+
+ctrls.controller( 'SiteProductsCtrl', [ '$scope', '$http', function( $scope, $http ) {
+    $http.get( 'model/products.json' ).
+    success( function( data ) {
+        $scope.products = data;
+    }).error( function() {
+        console.log('Błąd pobierania pliku products.json');
+    });
+}]);
+
+ctrls.controller('SiteProductCtrl', [ '$scope', '$http', '$routeParams',  function( $scope, $http, $routeParams ) {
+    $http.get( 'model/products.json' ).
+    success( function( data ) {
+        $scope.product = data[ $routeParams.id ];
+    }).error( function() {
+        console.log('Błąd pobierania pliku products.json');
+    });
+}]);
+

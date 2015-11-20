@@ -5,12 +5,9 @@
     </div>
     
     <div class="col-xs-6">
-      <a href="#/product/add" class="btn btn-success pull-right">Dodaj produkt</a>
+      <a href="#/admin/product/add" class="btn btn-success pull-right">Dodaj produkt</a><br/>
     </div>
   </div>
-
-  <br/>
-
   <div class="row">
     <div class="col-xs-12">
       <div class="alert alert-info" ng-repeat="product in products | filter : search">
@@ -19,7 +16,7 @@
         {{ product.description }}<br/>
         {{ product.price | number:2 }}zł / kg<br/>
         <br/>
-        <a href="#/product/edit/{{$index}}" class="btn btn-default">Edytuj</a>
+        <a href="#/admin/product/edit/{{$index}}" class="btn btn-default">Edytuj</a>
         <button class="btn btn-danger pull-right" ng-click="deleteProduct( product, $index )">Usuń</button>
       </div>
     </div>
