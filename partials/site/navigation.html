@@ -16,6 +16,7 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+              <li ng-if="cart" ng-class="{ active : isActive( '/cart' ) }"><a href="#/cart">Koszyk</a></li>
               <li ng-class="{ active : isActive( '/products' ) }"><a href="#/products">Produkty</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

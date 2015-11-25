@@ -9,9 +9,13 @@
       <div class="panel panel-default" ng-repeat="product in products | filter : search">
         <div class="panel-body">
           <h3 class="pull-right"><span class="label label-warning">{{ product.price | number:2 }}zł / kg</span></h3>
+
           <h2><span class="text-capitalize">{{ product.name }}</span></h2>
           <br/>
+
           <a href="#/product/{{$index}}" class="btn btn-info">Szczegóły</a>
+
+          <button class="btn btn-primary" ng-click="addToCart( product )">Dodaj do koszyka</button> 
         </div>
       </div>
     </div>

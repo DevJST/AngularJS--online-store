@@ -4,13 +4,19 @@
       <div class="panel panel-default">
       	<div class="panel-body">
           <h2 class="pull-left">{{product.name}}</h2>
+
           <h2 class="pull-right"><span class="label label-warning">{{product.price | number:2}}zł</span></h2>
           <div class="clearfix"></div>
+
           <h3><span class="label label-info">Waga: {{product.weight}} kg</span></h3>
           <br/>
+
           <p>{{product.description}}</p>
           <br/>
+
           <a href="#/products" class="btn btn-default">Powrót</a>
+
+          <button class="btn btn-primary" ng-click="addToCart( product )">Dodaj do koszyka</button>  
       	</div>
       </div>
     </div>

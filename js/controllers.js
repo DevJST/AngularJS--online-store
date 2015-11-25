@@ -1,10 +1,10 @@
 'use strict'
 
-//==========================================Nav=================================================== 
+//=============================================Nav====================================================== 
 
 var ctrls = angular.module( 'ctrls', [ 'ngRoute' ] );
 
-ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', function( $scope, $location ) {
+ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', 'cartSrv', function( $scope, $location, cartSrv ) {
     $scope.getNavigation = function () {
         if ( $location.path().substring(0, 6) == "/admin" ) {
             return 'partials/admin/navigation.html';
@@ -16,6 +16,10 @@ ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', function( $scope, $
     $scope.isActive = function ( path ) {
         return $location.path() === path;
     };
+
+    $scope.$watch( function () {
+        $scope.cart = cartSrv.show().length;
+    });
 }]);
 
 //==========================================Admin Products============================================== 
@@ -120,23 +124,85 @@ ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
 
 
 
-//===========================================Site Orders================================================
+//===========================================Site Products================================================
 
-ctrls.controller( 'SiteProductsCtrl', [ '$scope', '$http', function( $scope, $http ) {
+ctrls.controller( 'SiteProductsCtrl', [ '$scope', '$http', 'cartSrv', function( $scope, $http, cartSrv ) {
     $http.get( 'model/products.json' ).
     success( function( data ) {
         $scope.products = data;
     }).error( function() {
         console.log('Błąd pobierania pliku products.json');
     });
+
+    $scope.addToCart = function ( product ) {
+        cartSrv.addProduct( product );
+    };
 }]);
 
-ctrls.controller('SiteProductCtrl', [ '$scope', '$http', '$routeParams',  function( $scope, $http, $routeParams ) {
+ctrls.controller( 'SiteProductCtrl', [ '$scope', '$http', '$routeParams', 'cartSrv',  function( $scope, $http, $routeParams, cartSrv ) {
     $http.get( 'model/products.json' ).
     success( function( data ) {
         $scope.product = data[ $routeParams.id ];
     }).error( function() {
         console.log('Błąd pobierania pliku products.json');
     });
+
+    $scope.addToCart = function ( product ) {
+        cartSrv.addProduct( product );
+    };
 }]);
 
+//===========================================Site Cart===================================================
+
+ctrls.controller( 'CartCtrl', [ '$scope', '$filter', 'cartSrv', function( $scope, $filter, cartSrv ) {
+    $scope.cart = cartSrv.show();
+
+    $scope.clearCart = function () {
+        cartSrv.clear();
+    };
+
+    $scope.getTotal = function () {
+        var total = 0;
+
+        angular.forEach( $scope.cart, function ( item ) {
+            total += item.price * item.quantity;
+        });
+
+        return $filter( 'number' )(total, 2);
+    }
+
+    $scope.removeProduct = function ( index ) {
+        cartSrv.removeProduct ( index );
+    };
+
+    $scope.setOrder = function ( $event, paypalFormValid ) {
+        if ( !paypalFormValid ) {
+            $event.preventDefault();
+        }
+
+        // TODO: check if user is logged in 
+        var loggedIn = true;
+
+        if ( !loggedIn ) {
+            $scope.alert = { type : 'warning', msg : 'Musisz sie zalogować aby złożyć zamówienie' };
+            $event.preventDefault();
+            return false;
+        }
+
+        // TODO: store the order in the database
+
+        console.log( $scope.getTotal() );
+        console.log( $scope.cart );
+
+        $scope.alert = { type : 'success', msg : 'Trwa przekierowywanie do płatności, nie odswirzaj strony' };
+        cartSrv.clear();
+
+        $event.preventDefault(); // temp
+
+        // TODO: send the form after that logic 
+    };
+
+    $scope.$watch( function () {
+        cartSrv.update( $scope.cart );
+    });
+}]);

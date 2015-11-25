@@ -1,6 +1,6 @@
 'use strict'
 
-var app = angular.module( 'app', [ 'ngRoute', 'ctrls' ] );
+var app = angular.module( 'app', [ 'ngRoute', 'customServices', 'ctrls' ] );
 
 app.config( [ '$routeProvider', '$httpProvider', function( $routeProvider, $httpProvider ) {  
     
@@ -57,7 +57,14 @@ app.config( [ '$routeProvider', '$httpProvider', function( $routeProvider, $http
         templateUrl : 'partials/site/product.html'
     });
 
-    //==================Default========================= 
+    //====================Site Cart==============================
+
+    $routeProvider.when( '/cart', {
+        controller : 'CartCtrl',
+        templateUrl : 'partials/site/cart.html'
+    }); 
+
+    //======================Default==============================
 
     $routeProvider.otherwise({
         redirectTo : "/home"
