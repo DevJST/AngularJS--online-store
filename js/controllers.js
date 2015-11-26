@@ -124,6 +124,7 @@ ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
 
 
 
+
 //===========================================Site Products================================================
 
 ctrls.controller( 'SiteProductsCtrl', [ '$scope', '$http', 'cartSrv', function( $scope, $http, cartSrv ) {
@@ -204,5 +205,16 @@ ctrls.controller( 'CartCtrl', [ '$scope', '$filter', 'cartSrv', function( $scope
 
     $scope.$watch( function () {
         cartSrv.update( $scope.cart );
+    });
+}]);
+
+//===========================================Site Orders=================================================
+
+ctrls.controller( 'SiteOrdersCtrl', [ '$scope', '$http', function ( $scope, $http ) {
+    $http.get( 'model/orders.json' ).
+    success( function( data ) {
+        $scope.orders = data;
+    }).error( function() {
+        console.log('Błąd pobierania pliku orders.json');
     });
 }]);

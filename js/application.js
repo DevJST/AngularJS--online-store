@@ -45,6 +45,9 @@ app.config( [ '$routeProvider', '$httpProvider', function( $routeProvider, $http
         templateUrl : 'partials/admin/orders.html'
     });
 
+
+
+
     //====================Site Products==========================                             
 
     $routeProvider.when( '/products', {
@@ -62,6 +65,13 @@ app.config( [ '$routeProvider', '$httpProvider', function( $routeProvider, $http
     $routeProvider.when( '/cart', {
         controller : 'CartCtrl',
         templateUrl : 'partials/site/cart.html'
+    }); 
+
+    //====================Site Orders============================
+
+    $routeProvider.when( '/orders', {
+        controller : 'SiteOrdersCtrl',
+        templateUrl : 'partials/site/orders.html'
     }); 
 
     //======================Default==============================
