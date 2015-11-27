@@ -1,58 +1,61 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <div class="alert alert-info" ng-if=" !cart.length && alert.type !== 'success' ">Koszyk jest pusty</div>
+      <div class="alert alert-info" ng-if="!cart.length">Koszyk jest pusty</div>
 
       <div class="alert alert-{{alert.type}}" ng-if="cart">{{alert.msg}}</div>
 
-      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="paypalForm" name="paypalForm" ng-submit="setOrder( $event, paypalForm.$valid )" ng-if="cart.length">
-       <table class="table table-hover">
-      	<thead>
-      	  <tr>
-      	    <th>Produkt</th>
-      	    <th>Waga</th>
-      	    <th>Ilość</th>
-      	    <th>Cena</th>
-      	    <th>Razem</th>
-            <th>Usuń</th>
-      	  </tr>
-      	</thead>
-      	<tbody>
-      	  <tr ng-repeat="product in cart">
-      		  <td>{{ product.name }}</td>
-      		  <td>{{ product.weight }}</td>
-      		  <td>
-              <div class="form-group" ng-class="{ 'has-error' : !paypalForm.$valid }">
-                <input type="number" min="1" max="20" class="form-control" name="product{{$index}}_input_qty" style="width: 70px;" ng-model="product.quantity" required />
-              </div> 
-              <span class="text-danger" ng-show="paypalForm.product{{$index}}_input_qty.$error.required">Podaj ilość</span>
-              <span class="text-danger" ng-show="paypalForm.product{{$index}}_input_qty.$error.number">Błędny format</span>
-              <span class="text-danger" ng-show="paypalForm.product{{$index}}_input_qty.$error.max">Brak takiej ilości w magazynie</span>
-              <span class="text-danger" ng-show="paypalForm.product{{$index}}_input_qty.$error.min">???</span>
-            </td>
-      		  <td>{{ product.price | number:2 }} zł</td>
-      		  <td><strong>{{ product.quantity * product.price | number:2 }} zł</strong></td>
-            <td><button class="btn btn-danger btn-xs" ng-click="removeProduct( product )"><span class="glyphicon glyphicon-trash"</button></td>
-      	  </tr>
-      	  <tr>
-      		  <td colspan="6" style="text-align: right; padding-right: 20px"><strong>Łącznie: {{ getTotal() | number:2 }} zł</strong></td>
-      	  </tr>
-      	</tbody>
-       </table>
-       <button ng-click="clearCart()" class="btn btn-danger">Wyczyść koszyk</button>
-       <button class="btn btn-primary pull-right" type="submit" ng-disabled="!paypalForm.$valid">Zapłać</button>
+      <form method="post" id="paypalForm" name="paypalForm" ng-submit="setOrder($event, paypalForm.$valid)" ng-if="cart.length">
+         <table class="table table-hover">
+          	<thead>
+          	  <tr>
+          	    <th>Produkt</th>
+          	    <th>Waga</th>
+          	    <th>Ilość</th>
+          	    <th>Cena</th>
+          	    <th>Razem</th>
+                <th>Usuń</th>
+          	  </tr>
+          	</thead>
 
-       <input type="hidden" name="cmd" value="_cart">
-       <input type="hidden" name="upload" value="1">
-       <input type="hidden" name="business" value="poczta@adrianbienias.pl">
-       <input type="hidden" name="charset" value="utf-8">
-       <input type="hidden" name="currency_code" value="PLN">
+          	<tbody>
+          	  <tr ng-repeat="product in cart">
+          		  <td>{{ product.name }}</td>
+          		  <td>{{ product.weight }}</td>
+          		  <td>
+                  <div class="form-group" ng-class="{ 'has-error' : !paypalForm.$valid }">
+                    <input type="number" min="1" max="20" class="form-control" name="product{{$index}}_input_qty" style="width: 70px;" ng-model="product.quantity" required />
+                  </div> 
+                  <span class="text-danger" ng-show="paypalForm.product{{$index}}_input_qty.$error.required">Podaj ilość</span>
+                  <span class="text-danger" ng-show="paypalForm.product{{$index}}_input_qty.$error.number">Błędny format</span>
+                  <span class="text-danger" ng-show="paypalForm.product{{$index}}_input_qty.$error.max">Brak takiej ilości w magazynie</span>
+                  <span class="text-danger" ng-show="paypalForm.product{{$index}}_input_qty.$error.min">???</span>
+                </td>
+          		  <td>{{ product.price | number:2 }} zł</td>
+          		  <td><strong>{{ product.quantity * product.price | number:2 }} zł</strong></td>
+                <td><button class="btn btn-danger btn-xs" ng-click="removeProduct( product )"><span class="glyphicon glyphicon-trash"></span></button></td>
+          	  </tr>
 
-       <div ng-repeat="product in cart">
-         <input type="hidden" name="item_name_{{$index+1}}" value="{{product.name}}">
-         <input type="hidden" name="quantity_{{$index+1}}" value="{{product.quantity}}">
-         <input type="hidden" name="amount_{{$index+1}}" value="{{product.price}}">
-       </div>
+          	  <tr>
+          		  <td colspan="6" style="text-align: right; padding-right: 20px"><strong>Łącznie: {{ getTotal() | number:2 }} zł</strong></td>
+          	  </tr>
+          	</tbody>
+         </table>
+         
+         <button ng-click="clearCart()" class="btn btn-danger">Wyczyść koszyk</button>
+         <button class="btn btn-primary pull-right" type="submit" ng-disabled="!paypalForm.$valid">Zapłać</button>
+
+         <input type="hidden" name="cmd" value="_cart">
+         <input type="hidden" name="upload" value="1">
+         <input type="hidden" name="business" value="poczta@adrianbienias.pl">
+         <input type="hidden" name="charset" value="utf-8">
+         <input type="hidden" name="currency_code" value="PLN">
+
+         <div ng-repeat="product in cart">
+           <input type="hidden" name="item_name_{{$index+1}}" value="{{item.name}}">
+           <input type="hidden" name="quantity_{{$index+1}}" value="{{item.quantity}}">
+           <input type="hidden" name="amount_{{$index+1}}" value="{{item.price}}">
+         </div>
       </form>
       
     </div>

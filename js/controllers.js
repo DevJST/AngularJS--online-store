@@ -2,7 +2,7 @@
 
 //=============================================Nav====================================================== 
 
-var ctrls = angular.module( 'ctrls', [ 'ngRoute' ] );
+var ctrls = angular.module( 'ctrls', [ 'ngRoute', 'angularFileUpload' ] );
 
 ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', 'cartSrv', function( $scope, $location, cartSrv ) {
     $scope.getNavigation = function () {
@@ -34,11 +34,14 @@ ctrls.controller( 'ProductsCtrl' , [ '$scope', '$http', function( $scope, $http 
 
     $scope.deleteProduct = function ( product, index ) {
 
-    	$scope.products.splice( index, 1 );
+        if ( !confirm( 'Czy na pewno chcesz usunąć ten produkt?' ) ) 
+            return;
+            
+        $scope.products.splice( index, 1 );
     };
 }]);
 
-ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', function( $scope, $http, $routeParams ) {
+ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', 'FileUploader', function( $scope, $http, $routeParams, FileUploader ) {
 	$http.get( 'model/products.json' ).
     success( function( data ) {
         $scope.product = data[$routeParams.id];
@@ -51,6 +54,23 @@ ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', functi
     	console.log( product );
     	console.log( 'Formularz przesłany' );
     };
+
+    var uploader = $scope.uploader = new FileUploader({
+            url: ''
+    });
+
+    uploader.filters.push({
+        name: 'imageFilter',
+        fn: function(item /*{File|FileLikeObject}*/, options) {
+            var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+        }
+    }); 
+
+    uploader.onCompleteItem = function(fileItem, response, status, headers) {
+        console.info('onCompleteItem', fileItem, response, status, headers);
+    }; 
+
 }]);
 
 ctrls.controller( 'AddProductCtrl', [ '$scope', '$http', function( $scope, $http ) {
@@ -70,6 +90,9 @@ ctrls.controller( 'UsersCtrl', [ '$scope', '$http', function( $scope, $http ) {
         console.log('Błąd pobierania pliku users.json');
     });
     $scope.deleteUser = function ( user, index ) {
+
+        if ( !confirm( 'Czy na pewno chcesz usunąć tego użytkownika?' ) ) 
+            return;
 
         $scope.users.splice( index, 1 );
     };
@@ -117,6 +140,9 @@ ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
     };
 
     $scope.deleteOrder = function ( order, index ) {
+
+        if ( !confirm( 'Czy na pewno chcesz usunąć to zamówienie?' ) ) 
+            return;
 
         $scope.orders.splice( order, 1 );
     };
@@ -173,6 +199,7 @@ ctrls.controller( 'CartCtrl', [ '$scope', '$filter', 'cartSrv', function( $scope
     }
 
     $scope.removeProduct = function ( index ) {
+
         cartSrv.removeProduct ( index );
     };
 
@@ -217,4 +244,32 @@ ctrls.controller( 'SiteOrdersCtrl', [ '$scope', '$http', function ( $scope, $htt
     }).error( function() {
         console.log('Błąd pobierania pliku orders.json');
     });
+}]);
+
+
+
+
+//=========================================Login & Register==============================================
+
+ctrls.controller( 'loginCtrl', [ '$scope', function ( $scope ) {
+    $scope.input = {};
+
+    $scope.loginFormSubmit = function () {
+        $scope.errors = [];
+        $scope.errors.login = 'Błędne hasło lub e-mail';
+
+        console.log($scope.input);
+    };
+}]);
+
+ctrls.controller( 'registerCtrl', [ '$scope', function ( $scope ) {
+    $scope.registerFormSubmit = function () {
+        $scope.input = {};
+        $scope.errors = {};
+        
+        console.log($scope.input);
+
+        $scope.errors.email = "jakiś błąd";
+        $scope.submitted = true;
+    };
 }]);

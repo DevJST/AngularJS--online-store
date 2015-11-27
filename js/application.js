@@ -74,6 +74,21 @@ app.config( [ '$routeProvider', '$httpProvider', function( $routeProvider, $http
         templateUrl : 'partials/site/orders.html'
     }); 
 
+
+
+
+    //==================Login & Register=========================
+
+    $routeProvider.when( '/login', {
+        controller : 'loginCtrl',
+        templateUrl : 'partials/site/login.html'
+    }); 
+
+    $routeProvider.when( '/register', {
+        controller : 'registerCtrl',
+        templateUrl : 'partials/site/register.html'
+    }); 
+
     //======================Default==============================
 
     $routeProvider.otherwise({

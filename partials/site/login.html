@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6 center-block">
+      <form ng-submit="loginFormSubmit()">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Logowanie</h3>
+          </div>
+
+          <div class="panel-body">
+            <div class="alert alert-danger" ng-if="errors.login">{{errors.login}}</div>
+
+            <div class="from-group" ng-class="{ 'has-error' : errors.login }">
+              <label>Email</label>
+              <input type="text" class="form-control" placeholder="twój adres e-mail" ng-model="input.email"  />
+            </div>
+
+            <br/>
+
+            <div class="from-group" ng-class="{ 'has-error' : errors.login }">
+              <label>Hasło</label>
+              <input type="password" class="form-control" ng-model="input.password"  placeholder="twoje hasło" />
+            </div>
+
+            <br/>
+
+            <button class="btn btn-primary btn-block">Zaloguj się</button>
+          </div>
+        </div>
+      </form>  
+    </div>
+  </div>
+</div>

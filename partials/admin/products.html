@@ -5,19 +5,24 @@
     </div>
     
     <div class="col-xs-6">
-      <a href="#/admin/product/add" class="btn btn-success pull-right">Dodaj produkt</a><br/>
+      <a href="#/admin/product/add" class="btn btn-success pull-right">Dodaj produkt</a>
+      <br/>
+      <br/>
     </div>
   </div>
   <div class="row">
     <div class="col-xs-12">
-      <div class="alert alert-info" ng-repeat="product in products | filter : search">
-        <span class="text-capitalize">{{ product.name }}</span><br/>
-        waga: {{ product.weight }} kg<br/>
-        {{ product.description }}<br/>
-        {{ product.price | number:2 }}zł / kg<br/>
-        <br/>
-        <a href="#/admin/product/edit/{{$index}}" class="btn btn-default">Edytuj</a>
-        <button class="btn btn-danger pull-right" ng-click="deleteProduct( product, $index )">Usuń</button>
+      <div class="panel panel-default" ng-repeat="product in products | filter : search">
+        <div class="panel-body">
+          <h3 class="pull-right"><span class="label label-warning">{{ product.price | number:2 }}zł / kg</span></h3>
+          <h2><span class="text-capitalize">{{ product.name }}</span></h2>
+          <h4><span class="label label-info">waga: {{ product.weight }} kg</span></h4>
+          {{ product.description }}<br/>
+          
+          <br/>
+          <a href="#/admin/product/edit/{{$index}}" class="btn btn-default">Edytuj</a>
+          <button class="btn btn-danger pull-right" ng-click="deleteProduct( product, $index )">Usuń</button>
+        </div>
       </div>
     </div>
   </div>
