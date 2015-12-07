@@ -42,21 +42,44 @@ ctrls.controller( 'ProductsCtrl' , [ '$scope', '$http', function( $scope, $http 
 }]);
 
 ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', 'FileUploader', function( $scope, $http, $routeParams, FileUploader ) {
-	$http.get( 'model/products.json' ).
-    success( function( data ) {
-        $scope.product = data[$routeParams.id];
-    }).error( function() {
-        console.log('Błąd pobierania pliku products.json');
-    });
+	  $http.get( 'model/products.json' ).
+        success( function( data ) {
+            $scope.product = data[$routeParams.id];
+        }).error( function() {
+            console.log('Błąd pobierania pliku products.json');
+        });
 
+    $scope.productId = $routeParams.id;
+    
+    function getImages() {
+        $http.get( 'api/admin/images/get/' +  $routeParams.id ).
+        success( function( data ) {
+            $scope.images = data;
+        }).error( function() {
+            console.log('Błąd pobierania zdjęć produktu');
+        });
+    }
+    
+    getImages();
+    
+    $scope.removeImgages = function( productId, imageName ) {
+        $http.post( 'api/admin/images/delete', {
+            id : productId,
+            name: imageName
+        }).success( function() {
+              $scope.images.splice( productId, 1 );
+          }).error( function() {
+              console.log('Błąd usuwania zdjęcia z serwera');
+          });  
+    };
+    
     $scope.saveChanges = function ( product ) {
-
     	console.log( product );
     	console.log( 'Formularz przesłany' );
     };
 
     var uploader = $scope.uploader = new FileUploader({
-            url: ''
+            url: 'api/admin/images/upload/' + $routeParams.id
     });
 
     uploader.filters.push({
@@ -68,9 +91,10 @@ ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', 'FileU
     }); 
 
     uploader.onCompleteItem = function(fileItem, response, status, headers) {
-        console.info('onCompleteItem', fileItem, response, status, headers);
+        getImages();
     }; 
-
+    
+    
 }]);
 
 ctrls.controller( 'AddProductCtrl', [ '$scope', '$http', function( $scope, $http ) {
@@ -107,7 +131,6 @@ ctrls.controller( 'EditUserCtrl', [ '$scope', '$http', '$routeParams', function(
     });
 
     $scope.saveChanges = function ( user ) {
-
         console.log( user );
         console.log( 'Formularz przesłany' );
     };
@@ -115,7 +138,6 @@ ctrls.controller( 'EditUserCtrl', [ '$scope', '$http', '$routeParams', function(
 
 ctrls.controller( 'AddUserCtrl', [ '$scope', '$http', function( $scope, $http ) {
     $scope.addUser = function () {
-
         console.log( $scope.user );
     };
 }]);
