@@ -22,10 +22,28 @@
           <input type="text" class="form-control" ng-model="product.price" />
         </div>     
       </div>
+
+      <div class="col-sm-6">
+      <h2>{{product.name}}</h2>
+        <p>Waga: {{product.weight}}kg</p>
+        <p>{{product.description}}</p>
+        <h3>
+          <span class="label label-warning">{{product.price | number:2}}zł</span>
+        </h3>
+        
+        <div ng-repeat="image in images">
+          <div class="pull-left" style="position: relative">
+            <img ng-src="uploads/{{productId}}/{{image}}" alt="product image{{productId}}" class="img-thumbnail" style="max-width: 150px; margin-left: 15px;">
+            <button type="button" class="btn btn-danger btn-xs" ng-click="removeImgages( productId, image )" style="position: absolute; top: 0; right: 0;">x</button>
+          </div>
+        </div>
+      </div>
+
       <div class="col-xs-12">
         <hr/>
-        <input type="submit" value="dodaj produkt" class="btn btn-primary" />
-        <a href="#/admin/products" class="btn btn-default">anuluj</a>
+        <input type="submit" value="dodaj produkt" class="btn btn-primary" ng-if="!success" />
+        <input type="button" value="dodano produkt" class="btn btn-success" ng-if="success" />
+        <a href="#/admin/products" class="btn btn-default">wróć</a>
       </div>
     </div>
   </div>

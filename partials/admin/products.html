@@ -20,8 +20,8 @@
           {{ product.description }}<br/>
           
           <br/>
-          <a href="#/admin/product/edit/{{$index}}" class="btn btn-default">Edytuj</a>
-          <button class="btn btn-danger pull-right" ng-click="deleteProduct( product, $index )">Usuń</button>
+          <a href="#/admin/product/edit/{{product.productId}}" class="btn btn-default">Edytuj</a>
+          <button class="btn btn-danger pull-right" ng-click="deleteProduct( product.productId, $index )">Usuń</button>
         </div>
       </div>
     </div>

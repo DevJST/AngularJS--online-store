@@ -27,15 +27,15 @@
         </thread>
         <tbody>
           <tr ng-repeat="user in users | filter : search">
-            <td>{{$index}}</td>
+            <td>{{user.userId}}</td>
             <td>{{user.name}}</td>
             <td>{{user.email}}</td>
             <td>{{user.role}}</td>
             <td>
-              <a href="#/admin/user/edit/{{$index}}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>
+              <a href="#/admin/user/edit/{{user.userId}}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>
             </td>
             <td>
-              <button class="btn btn-danger pull-right btn-sm" ng-click="deleteUser( user, $index )"><span class="glyphicon glyphicon-trash"></span></button>
+              <button class="btn btn-danger pull-right btn-sm" ng-click="deleteUser( user.userId, $index )"><span class="glyphicon glyphicon-trash"></span></button>
             </td>
           </tr>
         </tbody>

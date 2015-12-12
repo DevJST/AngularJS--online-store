@@ -25,32 +25,55 @@ ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', 'cartSrv', function
 //==========================================Admin Products============================================== 
 
 ctrls.controller( 'ProductsCtrl' , [ '$scope', '$http', function( $scope, $http ) {
-    $http.get( 'model/products.json' ).
-    success( function( data ) {
-        $scope.products = data;
-    }).error( function() {
-        console.log('Błąd pobierania pliku products.json');
+    $http.get( 'api/admin/products/getProducts' ).
+        success( function( data ) {
+            $scope.products = data;
+        }).error( function() {
+            console.log( 'Błąd pobierania produktów' );
     });
 
-    $scope.deleteProduct = function ( product, index ) {
+    $scope.deleteProduct = function ( productId, index ) {
 
         if ( !confirm( 'Czy na pewno chcesz usunąć ten produkt?' ) ) 
             return;
             
-        $scope.products.splice( index, 1 );
+        $http.post( 'api/admin/products/deleteProduct', {
+            productId : productId
+        }).success( function() {
+            $scope.products.splice( index, 1 );
+        }).error( function() {
+            console.log('Błąd podczas próby usuwania produktu');
+        });
     };
 }]);
 
-ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', 'FileUploader', function( $scope, $http, $routeParams, FileUploader ) {
-	  $http.get( 'model/products.json' ).
-        success( function( data ) {
-            $scope.product = data[$routeParams.id];
-        }).error( function() {
-            console.log('Błąd pobierania pliku products.json');
-        });
+ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', '$timeout', 'FileUploader', function( $scope, $http, $routeParams, $timeout, FileUploader ) {
+	$scope.productId = $routeParams.id;
 
-    $scope.productId = $routeParams.id;
-    
+    $http.get( 'api/admin/products/getProduct/' + $routeParams.id ).
+        success( function( data ) {
+            $scope.product = data;
+        }).error( function() {
+            console.log('Błąd pobierania produktu');
+    });
+
+    $scope.success = false;
+
+    $scope.saveChanges = function ( product ) {
+        $http.post( 'api/admin/products/updateProduct', {
+            product : product
+        }).success( function() {
+            // TODO: make a returned json status value handling, after updating data.
+            $scope.success = true;
+            
+            $timeout(function() {
+                $scope.success = false;
+            }, 3000);
+        }).error( function() {
+            console.log('Błąd podczas próby uaktualnienia produktu');
+        });
+    };
+
     function getImages() {
         $http.get( 'api/admin/images/get/' +  $routeParams.id ).
         success( function( data ) {
@@ -72,11 +95,6 @@ ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', 'FileU
               console.log('Błąd usuwania zdjęcia z serwera');
           });  
     };
-    
-    $scope.saveChanges = function ( product ) {
-    	console.log( product );
-    	console.log( 'Formularz przesłany' );
-    };
 
     var uploader = $scope.uploader = new FileUploader({
             url: 'api/admin/images/upload/' + $routeParams.id
@@ -97,55 +115,129 @@ ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', 'FileU
     
 }]);
 
-ctrls.controller( 'AddProductCtrl', [ '$scope', '$http', function( $scope, $http ) {
-	$scope.addProduct = function () {
-
-    	console.log( $scope.product );
+ctrls.controller( 'AddProductCtrl', [ '$scope', '$http', '$timeout', function( $scope, $http, $timeout ) {
+	$scope.addProduct = function ( product ) {
+        $http.post( 'api/admin/products/createProduct', {
+            product : product
+        }).success( function() {
+            // TODO: make a returned json status value handling, after adding data.
+            $scope.success = true;
+            
+            $timeout(function() {
+                $scope.success = false;
+                $scope.product = {};
+            }, 3000);
+        }).error( function() {
+            console.log('Błąd podczas próby dodawania produktu');
+        });
     };
 }]);
 
 //==========================================Admin Users=================================================
 
 ctrls.controller( 'UsersCtrl', [ '$scope', '$http', function( $scope, $http ) {
-    $http.get( 'model/users.json' ).
+    $http.get( 'api/admin/users/getUsers' ).
     success( function( data ) {
         $scope.users = data;
     }).error( function() {
-        console.log('Błąd pobierania pliku users.json');
+        console.log('Błąd pobierania listy użytkowników');
     });
-    $scope.deleteUser = function ( user, index ) {
 
+    $scope.deleteUser = function ( userId, index ) {
         if ( !confirm( 'Czy na pewno chcesz usunąć tego użytkownika?' ) ) 
             return;
 
-        $scope.users.splice( index, 1 );
+        $http.post( 'api/admin/users/deleteUser', {
+            userId : userId
+        }).success( function() {
+            $scope.users.splice( index, 1 );
+        }).error( function() {
+            console.log('Błąd podczas próby usuwania użytkownika');
+        });
     };
 }]);
 
-ctrls.controller( 'EditUserCtrl', [ '$scope', '$http', '$routeParams', function( $scope, $http, $routeParams ) {
-    $http.get( 'model/users.json' ).
+ctrls.controller( 'EditUserCtrl', [ '$scope', '$http', '$routeParams', '$timeout', function( $scope, $http, $routeParams, $timeout ) {
+    $scope.user = {};
+    $scope.user.role = 'user';
+
+    $scope.success = false;
+
+    $http.get( 'api/admin/users/getUser/' + $routeParams.id  ).
     success( function( data ) {
-        $scope.user = data[$routeParams.id];
+        $scope.user = data;
     }).error( function() {
-        console.log('Błąd pobierania pliku users.json');
+        console.log('Błąd pobierania danych użytkownika');
     });
 
     $scope.saveChanges = function ( user ) {
-        console.log( user );
-        console.log( 'Formularz przesłany' );
+        $http.post( 'api/admin/users/updateUser', {
+            userId: $routeParams.id,
+            name: user.name,
+            password: user.password,
+            passconf: user.passconf,
+            email: user.email,
+            role: user.role
+        }).success( function( errors ) {
+            // TODO: make a returned json status value handling, after updating data.
+            if ( errors ) {
+                $scope.errors = errors; console.log(errors);
+            } else {
+                // TODO: make a returned json status value handling, after adding data.
+                $scope.errors = null;
+                $scope.success = true;
+                
+                $timeout(function() {
+                    $scope.success = false;
+                    $scope.user = {
+                        role: 'user'
+                    };
+                }, 3000);
+            }
+        }).error( function() {
+            console.log('Błąd podczas próby uaktualnienia użytkownika');
+        });
     };
 }]);
 
-ctrls.controller( 'AddUserCtrl', [ '$scope', '$http', function( $scope, $http ) {
-    $scope.addUser = function () {
-        console.log( $scope.user );
+ctrls.controller( 'AddUserCtrl', [ '$scope', '$http', '$timeout', function( $scope, $http, $timeout ) {
+    $scope.user = {};
+    $scope.user.role = 'user';
+
+    $scope.success = false;
+
+    $scope.addUser = function ( user ) {
+        $http.post( 'api/admin/users/createUser', {
+            name: user.name,
+            password: user.password,
+            passconf: user.passconf,
+            email: user.email,
+            role: user.role
+        }).success( function( errors ) {
+            if ( errors ) {
+                $scope.errors = errors; console.log(errors);
+            } else {
+                // TODO: make a returned json status value handling, after adding data.
+                $scope.errors = null;
+                $scope.success = true;
+                
+                $timeout(function() {
+                    $scope.success = false;
+                    $scope.user = {
+                        role: 'user'
+                    };
+                }, 3000);
+            }
+        }).error( function() {
+            console.log('Błąd podczas próby dodawania użytkownika');
+        });
     };
 }]);
 
 //==========================================Admin Orders================================================
 
 ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
-    $http.get( 'model/orders.json' ).
+    $http.get( '' ).
     success( function( data ) {
         $scope.orders = data;
     }).error( function() {
@@ -173,14 +265,15 @@ ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
 
 
 
+
 //===========================================Site Products================================================
 
 ctrls.controller( 'SiteProductsCtrl', [ '$scope', '$http', 'cartSrv', function( $scope, $http, cartSrv ) {
-    $http.get( 'model/products.json' ).
+    $http.get( 'api/site/products/getProducts' ).
     success( function( data ) {
         $scope.products = data;
     }).error( function() {
-        console.log('Błąd pobierania pliku products.json');
+        console.log('Błąd podczas próby pobierania produktów');
     });
 
     $scope.addToCart = function ( product ) {
@@ -189,11 +282,11 @@ ctrls.controller( 'SiteProductsCtrl', [ '$scope', '$http', 'cartSrv', function( 
 }]);
 
 ctrls.controller( 'SiteProductCtrl', [ '$scope', '$http', '$routeParams', 'cartSrv',  function( $scope, $http, $routeParams, cartSrv ) {
-    $http.get( 'model/products.json' ).
+    $http.get( 'api/site/products/getProduct/' +  $routeParams.id ).
     success( function( data ) {
-        $scope.product = data[ $routeParams.id ];
+        $scope.product = data;
     }).error( function() {
-        console.log('Błąd pobierania pliku products.json');
+        console.log('Błąd podczas pobierania produktu');
     });
 
     $scope.addToCart = function ( product ) {
@@ -260,15 +353,13 @@ ctrls.controller( 'CartCtrl', [ '$scope', '$filter', 'cartSrv', function( $scope
 //===========================================Site Orders=================================================
 
 ctrls.controller( 'SiteOrdersCtrl', [ '$scope', '$http', function ( $scope, $http ) {
-    $http.get( 'model/orders.json' ).
+    $http.get( '' ).
     success( function( data ) {
         $scope.orders = data;
     }).error( function() {
         console.log('Błąd pobierania pliku orders.json');
     });
 }]);
-
-
 
 
 //=========================================Login & Register==============================================
