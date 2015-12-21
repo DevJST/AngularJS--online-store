@@ -4,9 +4,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Products extends CI_Controller {
     public function __construct() {       
         parent::__construct();
-        
-        //$post = file_get_contents( 'php://input' );
-        //$_POST = json_decode( $post , true );
 
         $this->load->model( 'site/ProductsModel' );
     }

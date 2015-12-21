@@ -45,12 +45,12 @@ class Users extends CI_Controller {
 
         if( $this->form_validation->run() === true ) {
             $this->UsersModel->updateUser( array( 
-                                                    'userId' => $this->input->post( 'userId' ),
-                                                    'name' => $this->input->post( 'name' ),
-                                                    'email' => $this->input->post( 'email' ),
-                                                    'password' => $this->input->post( 'password' ),
-                                                    'role' => $this->input->post( 'role' )
-                                                ));            
+                'userId' => $this->input->post( 'userId' ),
+                'name' => $this->input->post( 'name' ),
+                'email' => $this->input->post( 'email' ),
+                'password' => crypt( $this->input->post( 'password' ), config_item( 'encryption_key' ) ),
+                'role' => $this->input->post( 'role' )
+            ));            
         } else {
             $errors['name'] = form_error( 'name' );
             $errors['email'] = form_error( 'email' );
@@ -70,11 +70,11 @@ class Users extends CI_Controller {
 
         if( $this->form_validation->run() ) {
             $this->UsersModel->createUser( array( 
-                                                    'name' => $this->input->post( 'name' ),
-                                                    'email' => $this->input->post( 'email' ),
-                                                    'password' => $this->input->post( 'password' ),
-                                                    'role' => $this->input->post( 'role' )
-                                                ));            
+                'name' => $this->input->post( 'name' ),
+                'email' => $this->input->post( 'email' ),
+                'password' => crypt( $this->input->post( 'password' ), config_item( 'encryption_key' ) ),
+                'role' => $this->input->post( 'role' )
+            ));            
         } else {
             $errors['name'] = form_error( 'name' );
             $errors['email'] = form_error( 'email' );

@@ -21,7 +21,7 @@
               <li ng-class="{ active : isActive( '/orders' ) }"><a href="#/admin/orders">Zamowienia</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#/logout">Wyloguj</a></li>
+              <li ng-if="loggedIn()" ng-click="logout()"><a href="#login">Wyloguj</a></li> 
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->

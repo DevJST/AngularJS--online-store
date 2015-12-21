@@ -1,41 +1,44 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-6 center-block">
-      <form ng-submit="registerFormSubmit()">
-        <div class="panel panel-default">
+      <form ng-submit="registerFormSubmit( user )">
+
+        <div class="alert alert-success" ng-if="success">Zostałeś zarejestrowany poprawnie, <a href="#/login" class="alert-link">przejdź do strony logowania</a></div>
+
+        <div class="panel panel-default" ng-if="!success">
           <div class="panel-heading">
             <h3 class="panel-title">Logowanie</h3>
           </div>
 
           <div class="panel-body">
-            <div class="from-group" ng-class="{ 'has-error' : errors.name, 'has-success' : !errors.name && submitted }">
+            <div class="from-group" ng-class="{ 'has-error' : errors.name, 'has-success' : !errors.name && success }">
               <label>Imię</label>
-              <input type="text" class="form-control" placeholder="twoje imię" ng-model="input.name"  />
+              <input type="text" class="form-control" placeholder="twoje imię" ng-model="user.name"  />
               <span class="text-danger">{{errors.name}}</span>
             </div>
 
             <br/>
 
-            <div class="from-group" ng-class="{ 'has-error' : errors.email, 'has-success' : !errors.email && submitted }">
+            <div class="from-group" ng-class="{ 'has-error' : errors.email, 'has-success' : !errors.email && success }">
               <label>Email</label>
-              <input type="text" class="form-control" placeholder="twój adres e-mail" ng-model="input.email"  />
+              <input type="text" class="form-control" placeholder="twój adres e-mail" ng-model="user.email"  />
               <span class="text-danger">{{errors.email}}</span>
             </div>
 
             <br/>
 
-            <div class="from-group" ng-class="{ 'has-error' : errors.password, 'has-success' : !errors.password && submitted }">
+            <div class="from-group" ng-class="{ 'has-error' : errors.password, 'has-success' : !errors.password && success }">
               <label>Hasło</label>
-              <input type="password" class="form-control" ng-model="input.password"  placeholder="twoje hasło" />
+              <input type="password" class="form-control" placeholder="twoje hasło" ng-model="user.password" />
               <span class="text-danger">{{errors.password}}</span>
             </div>
 
             <br/>
 
-            <div class="from-group" ng-class="{ 'has-error' : errors.passwordconf, 'has-success' : !errors.passwordconf && submitted }">
+            <div class="from-group" ng-class="{ 'has-error' : errors.passwordconf, 'has-success' : !errors.passwordconf && success }">
               <label>Powtórz hasło</label>
-              <input type="password" class="form-control" ng-model="input.passwordconf"  placeholder="ponów hasło" />
-              <span class="text-danger">{{errors.passwordconf}}</span>
+              <input type="password" class="form-control" placeholder="ponów hasło" ng-model="user.passconf" />
+              <span class="text-danger">{{errors.passconf}}</span>
             </div>
 
             <br/>

@@ -14,9 +14,17 @@
           <p>{{product.description}}</p>
           <br/>
 
-          <a href="#/products" class="btn btn-default">Powrót</a>
+          <div class="pull-left" ng-repeat="image in images">
+            <img alt="product image{{productId}}" class="img-thumbnail" ng-src="uploads/{{product.productId}}/{{image}}"   style="max-width: 150px; margin-left: 15px;">
+          </div>
 
+          <div class="clearfix"></div>
+
+          <br/>
+
+          <a href="#/products" class="btn btn-default">Powrót</a>
           <button class="btn btn-primary" ng-click="addToCart( product )">Dodaj do koszyka</button>  
+          <button class="btn btn-danger" ng-if="product.quantity">W koszyku: {{product.quantity}}</button>
       	</div>
       </div>
     </div>

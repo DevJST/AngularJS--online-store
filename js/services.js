@@ -12,7 +12,7 @@ customServices.factory( 'cartSrv', function () {
         var cart = [];
     }
 
-	cart.show = function () {
+	cart.getCart = function () {
         return cart;
 	};
 
@@ -60,3 +60,48 @@ customServices.factory( 'cartSrv', function () {
 
 	return cart;
 });
+
+customServices.service( 'tokenHandling', [ 'jwtHelper', function ( jwtHelper ) {
+    
+    var token;
+    var tokenPayload;
+
+    this.loadToken = function () {
+        token = JSON.parse( localStorage.getItem( "token" ) );
+
+        if ( token ) {
+            tokenPayload = jwtHelper.decodeToken( token );
+        } else {
+            tokenPayload = false;
+        }
+    } 
+    this.loadToken();
+
+    this.getToken = function () {
+        //return angular.copy( token );
+        return token;
+    }
+
+    this.loggedIn = function () {
+        if ( tokenPayload ) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    this.isAdmin = function () {
+        var isAdmin = false;
+
+        if ( this.loggedIn() ) {
+            if ( tokenPayload.role === 'admin' ) { isAdmin = true;  } 
+
+        }
+        return isAdmin;
+    }
+
+    this.clearToken = function () {
+        localStorage.removeItem( "token" );
+        this.loadToken();
+    }
+}]);

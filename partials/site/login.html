@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-6 center-block">
-      <form ng-submit="loginFormSubmit()">
+      <form ng-submit="loginFormSubmit( user )">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">Logowanie</h3>
@@ -12,19 +12,19 @@
 
             <div class="from-group" ng-class="{ 'has-error' : errors.login }">
               <label>Email</label>
-              <input type="text" class="form-control" placeholder="twój adres e-mail" ng-model="input.email"  />
+              <input type="text" class="form-control" placeholder="twój adres e-mail" ng-model="user.email"  />
             </div>
 
             <br/>
 
             <div class="from-group" ng-class="{ 'has-error' : errors.login }">
               <label>Hasło</label>
-              <input type="password" class="form-control" ng-model="input.password"  placeholder="twoje hasło" />
+              <input type="password" class="form-control" placeholder="twoje hasło" ng-model="user.password" />
             </div>
 
             <br/>
 
-            <button class="btn btn-primary btn-block">Zaloguj się</button>
+            <button type="submit" class="btn btn-primary btn-block">Zaloguj się</button>
           </div>
         </div>
       </form>  

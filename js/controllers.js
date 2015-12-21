@@ -4,12 +4,16 @@
 
 var ctrls = angular.module( 'ctrls', [ 'ngRoute', 'angularFileUpload' ] );
 
-ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', 'cartSrv', function( $scope, $location, cartSrv ) {
+ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', 'tokenHandling', 'cartSrv', function( $scope, $location, tokenHandling, cartSrv ) {
     $scope.getNavigation = function () {
         if ( $location.path().substring(0, 6) == "/admin" ) {
-            return 'partials/admin/navigation.html';
+            if ( tokenHandling.isAdmin() === false ) {
+                $location.path( '/products' );
+            } else {
+                return 'partials/admin/navigation.html';
+            }       
         } else {
-            return 'partials/site/navigation.html'; 
+            return 'partials/site/navigation.html';    
         }
     }
 
@@ -17,8 +21,20 @@ ctrls.controller( 'NavigationCtrl', [ '$scope', '$location', 'cartSrv', function
         return $location.path() === path;
     };
 
+    $scope.loggedIn = function () {
+        return tokenHandling.loggedIn();
+    }
+
+    $scope.isAdmin = function () {
+        return tokenHandling.isAdmin();
+    }
+
+    $scope.logout = function () {
+        tokenHandling.clearToken();
+    }
+
     $scope.$watch( function () {
-        $scope.cart = cartSrv.show().length;
+        $scope.cart = cartSrv.getCart().length;
     });
 }]);
 
@@ -94,6 +110,8 @@ ctrls.controller( 'EditProductCtrl', [ '$scope', '$http', '$routeParams', '$time
           }).error( function() {
               console.log('Błąd usuwania zdjęcia z serwera');
           });  
+
+          getImages();
     };
 
     var uploader = $scope.uploader = new FileUploader({
@@ -179,11 +197,10 @@ ctrls.controller( 'EditUserCtrl', [ '$scope', '$http', '$routeParams', '$timeout
             email: user.email,
             role: user.role
         }).success( function( errors ) {
-            // TODO: make a returned json status value handling, after updating data.
             if ( errors ) {
-                $scope.errors = errors; console.log(errors);
+                $scope.errors = errors;
             } else {
-                // TODO: make a returned json status value handling, after adding data.
+                // TODO: make a returned json status value handling, after updating data.
                 $scope.errors = null;
                 $scope.success = true;
                 
@@ -272,6 +289,17 @@ ctrls.controller( 'SiteProductsCtrl', [ '$scope', '$http', 'cartSrv', function( 
     $http.get( 'api/site/products/getProducts' ).
     success( function( data ) {
         $scope.products = data;
+
+        var cartProducts = cartSrv.getCart();
+
+        for ( var i = 0; i < cartProducts.length; i++ ) {
+            for ( var j = 0; j < $scope.products.length; j++ ) {
+                if ( $scope.products[ j ].productId  === cartProducts[ i ].productId ) {
+                    $scope.products[ j ].quantity = cartProducts[ i ].quantity;
+                    break;
+                }
+            }
+        }
     }).error( function() {
         console.log('Błąd podczas próby pobierania produktów');
     });
@@ -285,9 +313,28 @@ ctrls.controller( 'SiteProductCtrl', [ '$scope', '$http', '$routeParams', 'cartS
     $http.get( 'api/site/products/getProduct/' +  $routeParams.id ).
     success( function( data ) {
         $scope.product = data;
+
+        var cartProducts = cartSrv.getCart();
+
+        for ( var i = 0; i < cartProducts.length; i++ ) {
+            if ( $scope.product.productId === cartProducts[ i ].productId ) {
+                $scope.product.quantity = cartProducts[ i ].quantity;
+                break;
+            }  
+        }
     }).error( function() {
         console.log('Błąd podczas pobierania produktu');
     });
+
+    function getImages() {
+        $http.get( 'api/site/images/get/' +  $routeParams.id ).
+        success( function( data ) {
+            $scope.images = data;
+        }).error( function() {
+            console.log('Błąd pobierania zdjęć produktu');
+        });
+    }
+    getImages();
 
     $scope.addToCart = function ( product ) {
         cartSrv.addProduct( product );
@@ -296,8 +343,8 @@ ctrls.controller( 'SiteProductCtrl', [ '$scope', '$http', '$routeParams', 'cartS
 
 //===========================================Site Cart===================================================
 
-ctrls.controller( 'CartCtrl', [ '$scope', '$filter', 'cartSrv', function( $scope, $filter, cartSrv ) {
-    $scope.cart = cartSrv.show();
+ctrls.controller( 'CartCtrl', [ '$scope', '$http', '$filter', 'cartSrv', 'tokenHandling', function( $scope, $http, $filter, cartSrv, tokenHandling ) {
+    $scope.cart = cartSrv.getCart();
 
     $scope.clearCart = function () {
         cartSrv.clear();
@@ -314,35 +361,37 @@ ctrls.controller( 'CartCtrl', [ '$scope', '$filter', 'cartSrv', function( $scope
     }
 
     $scope.removeProduct = function ( index ) {
-
         cartSrv.removeProduct ( index );
     };
 
     $scope.setOrder = function ( $event, paypalFormValid ) {
         if ( !paypalFormValid ) {
+            $scope.alert = { type : 'warning', msg : 'Formularz składania zamówienia zawiera błędy' };
             $event.preventDefault();
+            return false;
         }
 
-        // TODO: check if user is logged in 
-        var loggedIn = true;
-
-        if ( !loggedIn ) {
+        if ( !tokenHandling.loggedIn ) {
             $scope.alert = { type : 'warning', msg : 'Musisz sie zalogować aby złożyć zamówienie' };
             $event.preventDefault();
             return false;
         }
 
-        // TODO: store the order in the database
+        console.log( tokenHandling.getToken() );
 
-        console.log( $scope.getTotal() );
-        console.log( $scope.cart );
+        $http.post( 'api/site/orders/saveOrder', {
+            token: tokenHandling.getToken(),
+            cart: $scope.cart,
+            total: $scope.total
+        }).success( function () {
+            $scope.alert = { type : 'success', msg : 'Trwa przekierowywanie do płatności, nie odswirzaj strony' };
+            //cartSrv.clear();
 
-        $scope.alert = { type : 'success', msg : 'Trwa przekierowywanie do płatności, nie odswirzaj strony' };
-        cartSrv.clear();
-
-        $event.preventDefault(); // temp
-
-        // TODO: send the form after that logic 
+            // TODO: send the form  
+        }).error( function() {
+            $scope.alert = { type : 'error', msg : 'Próba dokonania zamówienia nie powiodła się' };
+            console.log( 'Błąd podczas zapisu zamówienia' );
+        });       
     };
 
     $scope.$watch( function () {
@@ -364,25 +413,51 @@ ctrls.controller( 'SiteOrdersCtrl', [ '$scope', '$http', function ( $scope, $htt
 
 //=========================================Login & Register==============================================
 
-ctrls.controller( 'loginCtrl', [ '$scope', function ( $scope ) {
-    $scope.input = {};
+ctrls.controller( 'loginCtrl', [ '$scope', '$http', '$location', 'tokenHandling', function ( $scope, $http, $location, tokenHandling ) {
+    $scope.errors = {};
+    $scope.success = false;
 
-    $scope.loginFormSubmit = function () {
-        $scope.errors = [];
-        $scope.errors.login = 'Błędne hasło lub e-mail';
+    $scope.loginFormSubmit = function ( user ) {
+        $http.post( 'api/site/user/login', {
+            email: user.email,
+            password: user.password
+        }).success( function( data ) {
+            if ( !data.error ) {
+                localStorage.setItem( "token", JSON.stringify( data.user ) );
+                tokenHandling.loadToken();
 
-        console.log($scope.input);
+                $location.path( '/products' );
+            } else {
+                console.log(data);
+            }
+        }).error( function() {
+            console.log( 'Błąd podczas próby logowania' );
+        });
     };
 }]);
 
-ctrls.controller( 'registerCtrl', [ '$scope', function ( $scope ) {
-    $scope.registerFormSubmit = function () {
-        $scope.input = {};
-        $scope.errors = {};
-        
-        console.log($scope.input);
+ctrls.controller( 'registerCtrl', [ '$scope', '$http', '$routeParams', function ( $scope, $http, $routeParams ) {
+    $scope.user = {};
+    $scope.errors = {};
+    $scope.success = false;
 
-        $scope.errors.email = "jakiś błąd";
-        $scope.submitted = true;
+    $scope.registerFormSubmit = function ( user ) {
+        $http.post( 'api/site/user/addUser', {
+            userId: $routeParams.id,
+            name: user.name,
+            email: user.email,
+            password: user.password,
+            passconf: user.passconf
+        }).success( function( errors ) {
+            if ( errors ) {
+                $scope.errors = errors;
+            } else {
+                // TODO: make a returned json status value handling, registration.
+                $scope.errors = null;
+                $scope.success = true;
+            }
+        }).error( function() {
+            console.log( 'Błąd podczas próby dodawania użytkownika' );
+        });
     };
 }]);

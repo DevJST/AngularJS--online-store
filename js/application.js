@@ -1,6 +1,6 @@
 'use strict'
 
-var app = angular.module( 'app', [ 'ngRoute', 'customServices', 'ctrls' ] );
+var app = angular.module( 'app', [ 'ngRoute', 'angular-jwt', 'customServices', 'ctrls' ] );
 
 app.config( [ '$routeProvider', '$httpProvider', function( $routeProvider, $httpProvider ) {  
     

@@ -33,7 +33,7 @@
                 </td>
           		  <td>{{ product.price | number:2 }} zł</td>
           		  <td><strong>{{ product.quantity * product.price | number:2 }} zł</strong></td>
-                <td><button class="btn btn-danger btn-xs" ng-click="removeProduct( product )"><span class="glyphicon glyphicon-trash"></span></button></td>
+                <td><button class="btn btn-danger btn-xs" type="button" ng-click="removeProduct( product )"><span class="glyphicon glyphicon-trash"></span></button></td>
           	  </tr>
 
           	  <tr>
