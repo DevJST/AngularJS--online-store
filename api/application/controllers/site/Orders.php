@@ -5,7 +5,7 @@ class Orders extends CI_Controller {
     public function __construct() {       
         parent::__construct();
 
-        //$this->load->model( 'site/OrdersModel' );
+        $this->load->model( 'site/OrdersModel' );
     }
 
     public function getOrders() {
@@ -23,11 +23,19 @@ class Orders extends CI_Controller {
         $_POST = json_decode( $post , true );
 
         $token = $this->input->post( 'token' );
-        $this->jwt->decode( $token , config_item( 'encryption_key' ) );
+        $tokenPayload = $this->jwt->decode( $token , config_item( 'encryption_key' ) );
 
         $cart = $this->input->post( 'cart' );
         $total = $this->input->post( 'total' ); 
 
-        var_dump($cart);
+        $order = array(
+            'userId' => $tokenPayload->userId,
+            'name' => $tokenPayload->name,
+            'email' => $tokenPayload->email,
+            'total' => $total,
+            'status' => 0
+        );  
+
+        $this->OrdersModel->saveOrder( $order, $cart );
     }
 }

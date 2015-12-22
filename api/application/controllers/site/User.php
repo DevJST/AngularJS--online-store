@@ -47,6 +47,7 @@ class User extends CI_Controller {
             $output[ 'user' ] = $this->jwt->encode( array(
                 'userId' => $loginData['user']->userId,
                 'name' => $loginData['user']->name,
+                'email' => $loginData['user']->email,
                 'role' => $loginData['user']->role
             ), config_item( 'encryption_key' )); 
         } else {

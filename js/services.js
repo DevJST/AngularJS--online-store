@@ -21,7 +21,9 @@ customServices.factory( 'cartSrv', function () {
 
         if ( !cart.length ) {
             product.quantity = 1;
+            delete product[ 'productId' ];
             cart.push( product );
+
             whetherNewProduct = false;
         } else {
             angular.forEach ( cart, function ( value, key ) {
@@ -34,6 +36,7 @@ customServices.factory( 'cartSrv', function () {
 
         if ( whetherNewProduct ) {
             product.quantity = 1;
+            delete product[ 'productId' ];
             cart.push( product );
         }
 

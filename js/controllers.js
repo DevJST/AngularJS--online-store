@@ -357,7 +357,7 @@ ctrls.controller( 'CartCtrl', [ '$scope', '$http', '$filter', 'cartSrv', 'tokenH
             total += item.price * item.quantity;
         });
 
-        return $filter( 'number' )(total, 2);
+        return total;
     }
 
     $scope.removeProduct = function ( index ) {
@@ -365,29 +365,25 @@ ctrls.controller( 'CartCtrl', [ '$scope', '$http', '$filter', 'cartSrv', 'tokenH
     };
 
     $scope.setOrder = function ( $event, paypalFormValid ) {
+        $event.preventDefault();
+
         if ( !paypalFormValid ) {
             $scope.alert = { type : 'warning', msg : 'Formularz składania zamówienia zawiera błędy' };
-            $event.preventDefault();
             return false;
         }
 
         if ( !tokenHandling.loggedIn ) {
             $scope.alert = { type : 'warning', msg : 'Musisz sie zalogować aby złożyć zamówienie' };
-            $event.preventDefault();
             return false;
         }
-
-        console.log( tokenHandling.getToken() );
 
         $http.post( 'api/site/orders/saveOrder', {
             token: tokenHandling.getToken(),
             cart: $scope.cart,
-            total: $scope.total
+            total: $scope.getTotal()
         }).success( function () {
             $scope.alert = { type : 'success', msg : 'Trwa przekierowywanie do płatności, nie odswirzaj strony' };
-            //cartSrv.clear();
-
-            // TODO: send the form  
+            cartSrv.clear();
         }).error( function() {
             $scope.alert = { type : 'error', msg : 'Próba dokonania zamówienia nie powiodła się' };
             console.log( 'Błąd podczas zapisu zamówienia' );
