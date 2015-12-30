@@ -21,7 +21,7 @@
         </thread>
         <tbody>
           <tr ng-repeat="order in orders | filter : search">
-            <td>{{$index}}</td>
+            <td>{{order.orderId}}</td>
             <td>{{order.name}}</td>
             <td>{{order.email}}</td>
             <td>
@@ -36,7 +36,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="item in order.items">
+                  <tr ng-repeat="item in order.cart">
                     <td>{{item.name}}</td>
                     <td>{{item.price}}</td>
                     <td>{{item.weight}}</td>
@@ -48,11 +48,11 @@
             </td>
             <td><h4><strong>{{order.total | number:2}} zł</strong></h4></td>
             <td>
-              <button class="btn btn-warning btn-sm" ng-if="order.status == 1" ng-click="changeStatus( order )">Oczekuje</button>
-              <button class="btn btn-success btn-sm" ng-if="order.status == 0" ng-click="changeStatus( order )">Wysłano</button>
+              <button class="btn btn-warning btn-sm" ng-if="order.status == 0" ng-click="changeStatus( order )">Oczekuje</button>
+              <button class="btn btn-success btn-sm" ng-if="order.status == 1" ng-click="changeStatus( order )">Wysłano</button>
             </td>
             <td>
-              <button class="btn btn-danger pull-right btn-sm" ng-click="deleteOrder( order, $index )"><span class="glyphicon glyphicon-trash"></span></button>
+              <button class="btn btn-danger pull-right btn-sm" ng-click="deleteOrder( order )"><span class="glyphicon glyphicon-trash"></span></button>
             </td>
           </tr>
         </tbody>

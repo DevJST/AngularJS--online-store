@@ -2,8 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class OrdersModel extends CI_Model {
-    public function getOrders( $userId ) {
-    	$query = $this->db->query( "SELECT orders.orderId, orders.name AS orderName, orders.email, orders.total, orders.status, order_products.name AS productName, order_products.price, order_products.weight, order_products.quantity FROM orders, order_products WHERE userId = $userId AND orders.orderId = order_products.orderId ORDER BY orderId;" );
+    public function getOrders() {
+    	$query = $this->db->query( "SELECT orders.orderId, orders.name AS orderName, orders.email, orders.total, orders.status, order_products.name AS productName, order_products.price, order_products.weight, order_products.quantity FROM orders, order_products WHERE orders.orderId = order_products.orderId ORDER BY orderId;" );
         
         $orders = array();
 
@@ -43,19 +43,18 @@ class OrdersModel extends CI_Model {
         return $orders;
     }
 
-    public function saveOrder( $order, $cart ) {
-    	$this->db->insert( 'orders', $order );
-        $insert_id = $this->db->insert_id();
+    public function changeStatus( $orderId, $status ) {
+        $query = "UPDATE orders SET status=$status WHERE orderId=$orderId";
+        $this->db->query( $query );
 
-        foreach ( $cart as &$value ) {
-            $value[ 'orderId' ] = $insert_id;
-            $this->db->insert( 'order_products', $value );
-        }
+        echo $query;
+    } 
+
+    public function deleteOrder( $orderId ) {
+        $this->db->where( 'orderId', $orderId );
+        $this->db->delete( 'order_products' );
+
+        $this->db->where( 'orderId', $orderId );
+        $this->db->delete( 'orders' );
     }
 }
-
-/*
-
-
-
-*/

@@ -13,11 +13,12 @@
             <div class="from-group" ng-class="{ 'has-error' : errors.login }">
               <label>Email</label>
               <input type="text" class="form-control" placeholder="twój adres e-mail" ng-model="user.email"  />
+              <span class="text-danger">{{errors}}</span>
             </div>
 
             <br/>
 
-            <div class="from-group" ng-class="{ 'has-error' : errors.login }">
+            <div class="from-group">
               <label>Hasło</label>
               <input type="password" class="form-control" placeholder="twoje hasło" ng-model="user.password" />
             </div>

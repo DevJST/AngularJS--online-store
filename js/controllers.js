@@ -253,29 +253,45 @@ ctrls.controller( 'AddUserCtrl', [ '$scope', '$http', '$timeout', function( $sco
 
 //==========================================Admin Orders================================================
 
-ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', function( $scope, $http ) {
-    $http.get( '' ).
-    success( function( data ) {
+ctrls.controller( 'OrdersCtrl', [ '$scope', '$http', 'tokenHandling', function( $scope, $http, tokenHandling ) {
+    $http.post( 'api/admin/orders/getOrders', {
+        token: tokenHandling.getToken()
+    }).success( function( data ) {
         $scope.orders = data;
     }).error( function() {
-        console.log('Błąd pobierania pliku orders.json');
+        console.log('Błąd pobierania zamówień');
     });
 
     $scope.changeStatus = function ( order ) {
+        var newStatus;
 
-        if ( order.status == 0 ) {
-            order.status = 1;
-        } else {
-            order.status = 0;
-        }
+        if ( order.status == 0 ) newStatus = 1;
+        else newStatus = 0;
+
+        $http.post( 'api/admin/orders/changeStatus', {
+            token: tokenHandling.getToken(),
+            orderId: order.orderId,
+            status: newStatus
+        }).success( function () {
+            order.status = newStatus;
+        }).error( function() {
+            console.log('Błąd podczas próby zmiany statusu zamówienia');
+        });
     };
 
-    $scope.deleteOrder = function ( order, index ) {
+    $scope.deleteOrder = function ( order ) {
 
         if ( !confirm( 'Czy na pewno chcesz usunąć to zamówienie?' ) ) 
             return;
 
-        $scope.orders.splice( order, 1 );
+        $http.post( 'api/admin/orders/deleteOrder', {
+            token: tokenHandling.getToken(),
+            orderId: order.orderId
+        }).success( function () {
+            $scope.orders.splice( order, 1 );
+        }).error( function() {
+            console.log('Błąd podczas próby usuwania zamówienia');
+        });
     };
 }]);
 
@@ -385,7 +401,7 @@ ctrls.controller( 'CartCtrl', [ '$scope', '$http', '$filter', 'cartSrv', 'tokenH
             $scope.alert = { type : 'success', msg : 'Trwa przekierowywanie do płatności, nie odswirzaj strony' };
             cartSrv.clear();
         }).error( function() {
-            $scope.alert = { type : 'error', msg : 'Próba dokonania zamówienia nie powiodła się' };
+            $scope.alert = { type : 'danger', msg : 'Próba dokonania zamówienia nie powiodła się' };
             console.log( 'Błąd podczas zapisu zamówienia' );
         });       
     };
@@ -397,12 +413,14 @@ ctrls.controller( 'CartCtrl', [ '$scope', '$http', '$filter', 'cartSrv', 'tokenH
 
 //===========================================Site Orders=================================================
 
-ctrls.controller( 'SiteOrdersCtrl', [ '$scope', '$http', function ( $scope, $http ) {
-    $http.get( '' ).
-    success( function( data ) {
+ctrls.controller( 'SiteOrdersCtrl', [ '$scope', '$http', 'tokenHandling', function ( $scope, $http, tokenHandling ) {
+    $http.post( 'api/site/orders/getOrders', {
+        token: tokenHandling.getToken()
+    }).success( function( data ) {
         $scope.orders = data;
+        $scope.anyOrders = data.length ? true : false;
     }).error( function() {
-        console.log('Błąd pobierania pliku orders.json');
+        console.log('Błąd pobierania zamówień');
     });
 }]);
 
@@ -410,7 +428,6 @@ ctrls.controller( 'SiteOrdersCtrl', [ '$scope', '$http', function ( $scope, $htt
 //=========================================Login & Register==============================================
 
 ctrls.controller( 'loginCtrl', [ '$scope', '$http', '$location', 'tokenHandling', function ( $scope, $http, $location, tokenHandling ) {
-    $scope.errors = {};
     $scope.success = false;
 
     $scope.loginFormSubmit = function ( user ) {
@@ -424,7 +441,7 @@ ctrls.controller( 'loginCtrl', [ '$scope', '$http', '$location', 'tokenHandling'
 
                 $location.path( '/products' );
             } else {
-                console.log(data);
+                $scope.errors = data.error;
             }
         }).error( function() {
             console.log( 'Błąd podczas próby logowania' );
